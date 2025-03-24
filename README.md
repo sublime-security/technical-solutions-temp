@@ -1,4 +1,4 @@
-# Sublime Solutions
+# Sublime Technical Solutions
 
 A collection of solutions for our Sublime customers, to help solve common challenges.
 
