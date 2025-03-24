@@ -6,7 +6,7 @@ A collection of solutions for our Sublime customers, to help solve common challe
 
 1. Clone this repository:
    ```
-   git clone https://github.com/your-organization/sublime-solutions.git
+   git clone https://github.com/sublime-security/technical-solutions.git
    ```
 2. Navigate to the specific solution you need
 3. Follow the instructions in each solution's README file
