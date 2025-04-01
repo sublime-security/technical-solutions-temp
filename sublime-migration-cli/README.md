@@ -35,12 +35,6 @@ The Sublime Migration CLI enables you to migrate configuration objects between d
 - Python 3.8 or higher
 - Required packages: click, requests, rich, tabulate
 
-### Install from PyPI
-
-```bash
-pip install sublime-migration-cli
-```
-
 ### Install from Source
 
 ```bash
@@ -48,6 +42,10 @@ git clone https://github.com/yourusername/sublime-migration-cli.git
 cd sublime-migration-cli
 pip install -e .
 ```
+
+### Install from PyPI
+
+Package not published to PyPI, but if there is interest, let us know!
 
 ## Authentication
 
