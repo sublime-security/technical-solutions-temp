@@ -8,8 +8,7 @@ A Python script that identifies newly added rules in the Sublime Security Core F
 - Performs hunts with the MQL source code of each new rule
 - Allows configurable hunt time ranges using simple lookback periods
 - Polls for hunt job completion
-- Generates a CSV report with rule information and message count
-- Supports all Sublime Security regions
+- Generates a CSV report
 
 ## Prerequisites
 
@@ -34,15 +33,15 @@ pip install -r requirements.txt
 Run the script with the following command:
 
 ```bash
-python sublime_rule_hunter.py [OPTIONS]
+python main.py [OPTIONS]
 ```
 
 ### Command Line Options
 
 - `--api-key`: Your Sublime Security API key
 - `--region`: Your Sublime Security region (NA_WEST, NA_EAST, CANADA, EU_DUBLIN, EU_UK, AUSTRALIA)
-- `--lookback`: Hunt time range (e.g., 7d for 7 days, 12h for 12 hours)
-- `--days`: Days to look back for new rules (default: 14)
+- `--hunt-lookback`: Hunt time range (e.g., 7d for 7 days, 12h for 12 hours)
+- `--rule-lookback`: Days to look back for new rules (default: 14)
 - `--output`: Output file name (default: sublime_rule_hunt_report.csv)
 
 ### Interactive Mode
@@ -67,7 +66,7 @@ The script generates a CSV report with the following columns:
 ## Example
 
 ```bash
-python sublime_rule_hunter.py --region NA_WEST --lookback 7d --output recent_rules_report.csv
+python sublime_rule_hunter.py --region NA_WEST --hunt-lookback 7d --output recent_rules_report.csv
 ```
 
 This will:

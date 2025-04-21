@@ -148,20 +148,22 @@ class SublimeRuleHunter:
         self,
         api_key: Optional[str] = None,
         region: Optional[str] = None,
-        lookback: Optional[str] = None,
-        days_to_check: int = 14,
-        output_file: str = "sublime_rule_hunt_report.csv"
+        hunt_lookback: Optional[str] = None,
+        rule_lookback: Optional[str] = "14d",
+        output_file: Optional[str] = None,
+        output_format: str = "json"
     ):
         self.api_key = api_key or self._prompt_for_api_key()
         self.region = self._get_region(region)
-        self.days_to_check = days_to_check
+        self.rule_lookback = rule_lookback
         self.output_file = output_file
+        self.output_format = output_format
         
         # Initialize API client
         self.api = SublimeAPI(self.api_key, self.region)
         
         # Set hunt time range
-        self.hunt_time_range = self._set_time_range(lookback)
+        self.hunt_time_range = self._set_time_range(hunt_lookback)
         self.hunt_jobs: List[HuntJob] = []
 
     def _prompt_for_api_key(self) -> str:
@@ -204,13 +206,13 @@ class SublimeRuleHunter:
         
         return value, unit
 
-    def _set_time_range(self, lookback: Optional[str]) -> Dict[str, str]:
-        """Set the time range for hunting based on lookback parameter or user input"""
+    def _set_time_range(self, hunt_lookback: Optional[str]) -> Dict[str, str]:
+        """Set the time range for hunting based on hunt_lookback parameter or user input"""
         now = datetime.datetime.now(datetime.timezone.utc)
         
-        if lookback:
+        if hunt_lookback:
             try:
-                value, unit = self._parse_lookback(lookback)
+                value, unit = self._parse_lookback(hunt_lookback)
                 if unit == 'd':
                     start = now - datetime.timedelta(days=value)
                 elif unit == 'h':
@@ -224,42 +226,48 @@ class SublimeRuleHunter:
                 start = now - datetime.timedelta(days=7)
                 end = now
         else:
-            print("\nPlease specify a lookback period for the hunt:")
-            print("1. Last 24 hours")
-            print("2. Last 7 days")
-            print("3. Last 30 days")
-            print("4. Custom period")
-            
-            choice = input("Enter your choice (1-4): ")
-            
-            if choice == "1":
-                start = now - datetime.timedelta(days=1)
-                end = now
-            elif choice == "2":
-                start = now - datetime.timedelta(days=7)
-                end = now
-            elif choice == "3":
-                start = now - datetime.timedelta(days=30)
-                end = now
-            elif choice == "4":
-                while True:
-                    custom_input = input("Enter lookback period (e.g., 4d for 4 days, 12h for 12 hours): ")
-                    try:
-                        value, unit = self._parse_lookback(custom_input)
-                        if unit == 'd':
-                            start = now - datetime.timedelta(days=value)
-                        elif unit == 'h':
-                            start = now - datetime.timedelta(hours=value)
-                        else:
-                            print("Invalid unit. Please use 'd' for days or 'h' for hours.")
-                            continue
-                        end = now
-                        break
-                    except (ValueError, TypeError) as e:
-                        print(f"Invalid format: {e}")
-                        print("Please try again with the format Nd or Nh (e.g., 4d for 4 days, 12h for 12 hours)")
+            # Interactive mode only for CSV output
+            if self.output_format.lower() == "csv":
+                print("\nPlease specify a lookback period for the hunt:")
+                print("1. Last 24 hours")
+                print("2. Last 7 days")
+                print("3. Last 30 days")
+                print("4. Custom period")
+                
+                choice = input("Enter your choice (1-4): ")
+                
+                if choice == "1":
+                    start = now - datetime.timedelta(days=1)
+                    end = now
+                elif choice == "2":
+                    start = now - datetime.timedelta(days=7)
+                    end = now
+                elif choice == "3":
+                    start = now - datetime.timedelta(days=30)
+                    end = now
+                elif choice == "4":
+                    while True:
+                        custom_input = input("Enter lookback period (e.g., 4d for 4 days, 12h for 12 hours): ")
+                        try:
+                            value, unit = self._parse_lookback(custom_input)
+                            if unit == 'd':
+                                start = now - datetime.timedelta(days=value)
+                            elif unit == 'h':
+                                start = now - datetime.timedelta(hours=value)
+                            else:
+                                print("Invalid unit. Please use 'd' for days or 'h' for hours.")
+                                continue
+                            end = now
+                            break
+                        except (ValueError, TypeError) as e:
+                            print(f"Invalid format: {e}")
+                            print("Please try again with the format Nd or Nh (e.g., 4d for 4 days, 12h for 12 hours)")
+                else:
+                    print("Invalid choice. Using default of 7 days.")
+                    start = now - datetime.timedelta(days=7)
+                    end = now
             else:
-                print("Invalid choice. Using default of 7 days.")
+                # Default to 7 days for JSON output (non-interactive)
                 start = now - datetime.timedelta(days=7)
                 end = now
         
@@ -267,7 +275,10 @@ class SublimeRuleHunter:
         start_str = start.strftime("%Y-%m-%dT%H:%M:%SZ")
         end_str = end.strftime("%Y-%m-%dT%H:%M:%SZ")
         
-        print(f"Hunt time range: {start_str} to {end_str}")
+        # Only print time range for CSV format
+        if self.output_format.lower() == "csv":
+            print(f"Hunt time range: {start_str} to {end_str}")
+        
         return {"start": start_str, "end": end_str}
 
     def get_core_feed_id(self) -> str:
@@ -289,8 +300,27 @@ class SublimeRuleHunter:
         try:
             rules_data = self.api.get_feed_rules(feed_id).get("rules", [])
             
-            # Calculate cutoff date (default: 14 days ago)
-            cutoff_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=self.days_to_check)
+            # Parse rule_lookback to get time delta
+            if isinstance(self.rule_lookback, str):
+                try:
+                    value, unit = self._parse_lookback(self.rule_lookback)
+                    if unit == 'd':
+                        cutoff_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=value)
+                    elif unit == 'h':
+                        cutoff_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=value)
+                    else:
+                        # Default to 14 days if invalid format
+                        if self.output_format.lower() == "csv":
+                            print(f"Invalid rule_lookback format: {self.rule_lookback}. Using default of 14 days.")
+                        cutoff_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=14)
+                except (ValueError, TypeError):
+                    # Default to 14 days if parsing fails
+                    if self.output_format.lower() == "csv":
+                        print(f"Invalid rule_lookback format: {self.rule_lookback}. Using default of 14 days.")
+                    cutoff_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=14)
+            else:
+                # If rule_lookback is not a string (shouldn't happen with updated parameter), default to 14 days
+                cutoff_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=14)
             
             new_rules = []
             for rule_data in rules_data:
@@ -307,7 +337,6 @@ class SublimeRuleHunter:
                             retrieved_at_str.replace('Z', '+00:00')
                         )
                         if retrieved_at > cutoff_date:
-                            print('here')
                             rule_obj = rule_data.get("rule", {})
                             
                             # Create Rule object
@@ -409,106 +438,167 @@ class SublimeRuleHunter:
         """Generate a URL to view a message group in the Sublime console"""
         return f"{self.api.region.api_url}/messages/{message_group_id}"
 
-    def generate_report(self, core_feed_id: str, hunt_jobs: List[HuntJob]) -> None:
-        """Generate a CSV report with the hunt results"""
-        try:
-            with open(self.output_file, 'w', newline='') as csvfile:
-                fieldnames = ['Rule Name', 'Rule Severity', 'MessageGroupsCount', 'Hunt Status', 'RuleURL', 'Samples']
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                
-                writer.writeheader()
-                for job in hunt_jobs:
-
-                    rule_url = f"{self.api.region.api_url}/feeds/{core_feed_id}/rules/{job.rule_id}"
-
-                    message_links_str = ''
-                    for msg_id in job.message_group_ids[:5]:
-                        message_links_str += self.get_message_url(msg_id)
-                        message_links_str += ","
-
-                    # Remove the trailing comma
-                    if message_links_str:
-                        message_links_str = message_links_str[:-1]
-
-                    print(job)
-                    writer.writerow({
-                        'Rule Name': job.rule_name,
-                        'Rule Severity': job.rule_severity,
-                        'MessageGroupsCount': job.message_groups_count,
-                        'Hunt Status': job.status,
-                        'RuleURL': rule_url,
-                        'Samples': message_links_str
-                    })
+    def prepare_report_data(self, core_feed_id: str, hunt_jobs: List[HuntJob]) -> List[Dict]:
+        """Prepare the report data in a structured format"""
+        report_data = []
+        for job in hunt_jobs:
+            rule_url = f"{self.api.region.api_url}/feeds/{core_feed_id}/rules/{job.rule_id}"
             
-            print(f"\nReport generated: {os.path.abspath(self.output_file)}")
+            message_links = []
+            for msg_id in job.message_group_ids[:5]:
+                message_links.append(self.get_message_url(msg_id))
+            
+            report_item = {
+                'ruleName': job.rule_name,
+                'ruleSeverity': job.rule_severity,
+                'messageGroupsCount': job.message_groups_count,
+                'huntStatus': job.status,
+                'ruleURL': rule_url,
+                'samples': message_links
+            }
+            report_data.append(report_item)
+            
+        return report_data
+
+    def write_csv_report(self, report_data: List[Dict], output_file: str) -> None:
+        """Write the report data to a CSV file"""
+        with open(output_file, 'w', newline='') as csvfile:
+            fieldnames = ['ruleName', 'ruleSeverity', 'messageGroupsCount', 'huntStatus', 'ruleURL', 'samples']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            
+            writer.writeheader()
+            for item in report_data:
+                # Create a copy to avoid modifying the original data
+                row = item.copy()
+                # For CSV, convert the list of samples to a comma-separated string
+                if isinstance(row['samples'], list):
+                    row['samples'] = ','.join(row['samples'])
+                writer.writerow(row)
+        
+        print(f"\nCSV report written to: {os.path.abspath(output_file)}")
+
+    def generate_report(self, core_feed_id: str, hunt_jobs: List[HuntJob]) -> None:
+        """Generate a report with the hunt results based on the specified format"""
+        try:
+            # Prepare the structured report data
+            report_data = self.prepare_report_data(core_feed_id, hunt_jobs)
+            
+            # Handle output based on format
+            if self.output_format.lower() == "csv":
+                # For CSV format, write to file
+                output_file = self.output_file or "sublime_rule_hunt_report.csv"
+                self.write_csv_report(report_data, output_file)
+            else:
+                # For JSON format
+                if self.output_file:
+                    # Write to file if specified
+                    with open(self.output_file, 'w') as jsonfile:
+                        json.dump(report_data, jsonfile, indent=2)
+                    print(f"\nJSON report written to: {os.path.abspath(self.output_file)}")
+                else:
+                    # Print raw JSON to stdout (default behavior)
+                    print(json.dumps(report_data))
+                
         except Exception as e:
-            print(f"Error generating report: {e}")
+            if self.output_format.lower() == "json" and not self.output_file:
+                # Return error as JSON when outputting to stdout
+                error_data = {"error": str(e)}
+                print(json.dumps(error_data))
+            else:
+                print(f"Error generating report: {e}")
 
     async def run(self) -> None:
         """Run the main process"""
-        print("Starting Sublime Rule Hunter...")
+        # Determine if we should operate in verbose mode (CSV) or quiet mode (JSON)
+        verbose_mode = self.output_format.lower() == "csv"
         
         # Get the core feed ID
-        print("\nFetching Sublime Core Feed...")
+        if verbose_mode:
+            print("Starting Sublime Rule Hunter...")
+            print("\nFetching Sublime Core Feed...")
+        
         core_feed_id = self.get_core_feed_id()
-        print(f"Found Sublime Core Feed with ID: {core_feed_id}")
+        
+        if verbose_mode:
+            print(f"Found Sublime Core Feed with ID: {core_feed_id}")
+            print(f"\nLooking for new rules added in the last {self.rule_lookback}...")
         
         # Get new rules
-        print(f"\nLooking for new rules added in the last {self.days_to_check} days...")
         rules = self.get_new_rules(core_feed_id)
         
         if not rules:
-            print("No new rules found.")
+            if verbose_mode:
+                print("No new rules found.")
+            else:
+                # For JSON, return empty array
+                print("[]")
             return
         
-        print(f"Found {len(rules)} new rules:")
-        for rule in rules:
-            print(f"- {rule.name} (Severity: {rule.severity})")
+        if verbose_mode:
+            print(f"Found {len(rules)} new rules:")
+            for rule in rules:
+                print(f"- {rule.name} (Severity: {rule.severity})")
         
         # Start hunt jobs for each rule
-        print("\nStarting hunt jobs...")
+        if verbose_mode:
+            print("\nStarting hunt jobs...")
+        
         hunt_jobs = await self.start_hunt_jobs(rules)
         
         if not hunt_jobs:
-            print("No hunt jobs were started successfully.")
+            if verbose_mode:
+                print("No hunt jobs were started successfully.")
+            else:
+                # For JSON, return empty array
+                print("[]")
             return
         
         # Poll for hunt job status
-        print("\nPolling for hunt job status...")
-        print("This may take a while depending on the size of your data and the time range...")
+        if verbose_mode:
+            print("\nPolling for hunt job status...")
+            print("This may take a while depending on the size of your data and the time range...")
+        
         hunt_jobs = await self.poll_hunt_job_status(hunt_jobs)
         
         # Get hunt results
-        print("\nGetting hunt results...")
+        if verbose_mode:
+            print("\nGetting hunt results...")
+        
         hunt_jobs = await self.get_hunt_results(hunt_jobs)
         
         # Generate report
-        print("\nGenerating report...")
+        if verbose_mode:
+            print("\nGenerating report...")
+        
         self.generate_report(core_feed_id, hunt_jobs)
         
-        # Print summary
-        print("\nSummary:")
-        for job in hunt_jobs:
-            status = "✅ Completed" if job.status == "COMPLETED" else "❌ Failed"
-            print(f"- {job.rule_name}: {job.message_groups_count} message groups found ({status})")
+        # Print summary only for CSV format
+        if verbose_mode:
+            print("\nSummary:")
+            for job in hunt_jobs:
+                status = "✅ Completed" if job.status == "COMPLETED" else "❌ Failed"
+                print(f"- {job.rule_name}: {job.message_groups_count} message groups found ({status})")
 
 
 async def main():
     parser = argparse.ArgumentParser(description='Sublime Rule Hunter - Find and hunt with new rules')
     parser.add_argument('--api-key', help='Your Sublime Security API key')
     parser.add_argument('--region', choices=REGIONS.keys(), help='Your Sublime Security region')
-    parser.add_argument('--lookback', help='Hunt time range (e.g., 7d for 7 days, 12h for 12 hours)')
-    parser.add_argument('--days', type=int, default=14, help='Days to look back for new rules (default: 14)')
-    parser.add_argument('--output', default='sublime_rule_hunt_report.csv', help='Output file name (default: sublime_rule_hunt_report.csv)')
+    parser.add_argument('--hunt-lookback', help='Hunt time range (e.g., 7d for 7 days, 12h for 12 hours)')
+    parser.add_argument('--rule-lookback', default='14d', help='Time to look back for new rules (e.g., 14d for 14 days, 48h for 48 hours, default: 14d)')
+    parser.add_argument('--output', help='Output file name (if not specified, prints to stdout)')
+    parser.add_argument('--format', choices=['csv', 'json'], default='json', 
+                        help='Output format (json or csv, default: json). CSV format requires a filename or defaults to sublime_rule_hunt_report.csv')
     
     args = parser.parse_args()
     
     hunter = SublimeRuleHunter(
         api_key=args.api_key,
         region=args.region,
-        lookback=args.lookback,
-        days_to_check=args.days,
-        output_file=args.output
+        hunt_lookback=args.hunt_lookback,
+        rule_lookback=args.rule_lookback,
+        output_file=args.output,
+        output_format=args.format
     )
     
     await hunter.run()
