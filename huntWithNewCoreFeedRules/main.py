@@ -20,6 +20,8 @@ import asyncio
 import sys
 import getpass
 
+CORE_FEED_NAME = "Sublime Core Feed"
+CORE_FEED_GIT_URL = "https://github.com/sublime-security/sublime-rules.git"
 
 class Region(NamedTuple):
     """Represents a Sublime Security region"""
@@ -286,11 +288,11 @@ class SublimeRuleHunter:
         try:
             feeds = self.api.get_feeds().get("feeds", [])
             for feed in feeds:
-                if (feed.get("name") == "Sublime Core Feed" and 
-                    feed.get("git_url") == "https://github.com/sublime-security/sublime-rules.git"):
+                if (feed.get("name") == CORE_FEED_NAME and 
+                    feed.get("git_url") == CORE_FEED_GIT_URL):
                     return feed.get("id")
             
-            raise ValueError("Sublime Core Feed not found")
+            raise ValueError(f"{CORE_FEED_NAME} not found")
         except Exception as e:
             print(f"Error getting core feed ID: {e}")
             sys.exit(1)
