@@ -5,6 +5,7 @@ import os
 from datetime import datetime
 from getpass import getpass
 import time
+import json
 
 # Region mapping
 REGION_MAP = {
@@ -78,7 +79,7 @@ async def process_all_data(base_url, api_token):
                             'classification': msg_group.get('classification'),
                             'state': msg_group.get('state'),
                             'message_count': len(msg_group.get('messages', [])),
-                            'reporters': ', '.join([report.get('reporter', '') for report in msg_group.get('user_reports', [])])
+                            'reporters': ', '.join([report.get('reporter', '') for report in msg_group.get('user_reports') or []])
                         }
                         all_data.append(processed_data)
             
