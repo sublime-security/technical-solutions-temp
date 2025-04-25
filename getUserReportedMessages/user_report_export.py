@@ -5,7 +5,6 @@ import os
 from datetime import datetime
 from getpass import getpass
 import time
-import json
 
 # Region mapping
 REGION_MAP = {
@@ -36,6 +35,18 @@ async def fetch_data(session, url, headers, offset=0, limit=CHUNK_SIZE):
     except Exception as e:
         print(f"Exception during fetch: {e}")
         return None
+
+
+def get_earliest_report_timestamp(user_reports):
+    """Extract the earliest timestamp from user_reports array"""
+    if not user_reports:
+        return None
+    
+    # Extract all timestamps
+    timestamps = [report.get('reported_at') for report in user_reports if report.get('reported_at')]
+    
+    # Return the earliest timestamp if any exist
+    return min(timestamps) if timestamps else None
 
 
 async def process_all_data(base_url, api_token):
@@ -71,6 +82,9 @@ async def process_all_data(base_url, api_token):
                     
                     # Process each message group
                     for msg_group in result['message_groups']:
+                        # Extract the earliest reported_at timestamp
+                        earliest_reported_at = get_earliest_report_timestamp(msg_group.get('user_reports', []))
+                        
                         # Extract the required fields
                         processed_data = {
                             'id': msg_group.get('id'),
@@ -79,7 +93,8 @@ async def process_all_data(base_url, api_token):
                             'classification': msg_group.get('classification'),
                             'state': msg_group.get('state'),
                             'message_count': len(msg_group.get('messages', [])),
-                            'reporters': ', '.join([report.get('reporter', '') for report in msg_group.get('user_reports') or []])
+                            'reporters': ', '.join([report.get('reporter', '') for report in msg_group.get('user_reports') or []]),
+                            'first_reported_at': earliest_reported_at  # Add the new field
                         }
                         all_data.append(processed_data)
             
