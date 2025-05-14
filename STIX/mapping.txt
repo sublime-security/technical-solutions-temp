@@ -1,0 +1,105 @@
+1. Email Message structure
+# This is the primary structure that identifies the email
+MDM Field                                 STIX Object & Property
+-------------------------------------------------------------
+_meta.id                                  email-message.id  ## or canonical_id?
+headers.message_id                        email-message.message_id
+subject.subject                           email-message.subject
+body.plain.raw                            email-message.body
+body.html.raw                             email-message.body_multipart[].body_raw
+headers.date                              email-message.date
+headers.in_reply_to                       email-message.in_reply_to_refs
+headers.references                        email-message.references
+sender.email.email                        email-message.from_ref -> email-addr
+recipients.to[].email.email               email-message.to_refs -> email-addr
+recipients.cc[].email.email               email-message.cc_refs -> email-addr
+recipients.bcc[].email.email              email-message.bcc_refs -> email-addr
+headers.reply_to[].email.email            email-message.additional_header_fields.reply_to
+headers.return_path.email                 email-message.additional_header_fields.return_path
+headers.delivered_to.email                email-message.additional_header_fields.delivered_to
+headers.mailer                            email-message.additional_header_fields.x_mailer
+attachments                               email-message.body_multipart[].body_raw_ref -> file
+
+2. Email Addresses
+# Duplicate values to above, but this is for a specific email object not message object.
+MDM Field                                 STIX Object & Property
+-------------------------------------------------------------
+sender.email.email                        email-addr.value
+sender.display_name                       email-addr.display_name
+sender.email.domain.domain                email-addr new object
+recipients.to[].email.email               email-addr.value
+recipients.to[].display_name              email-addr.display_name
+recipients.cc[].email.email               email-addr.value
+recipients.cc[].display_name              email-addr.display_name
+recipients.bcc[].email.email              email-addr.value
+recipients.bcc[].display_name             email-addr.display_name
+headers.reply_to[].email.email            email-addr.value
+headers.reply_to[].display_name           email-addr.display_name
+headers.return_path.email                 email-addr.value
+headers.delivered_to.email                email-addr.value
+headers.x_sender.email                    email-addr.value
+mailbox.email.email                       email-addr.value
+mailbox.display_name                      email-addr.display_name
+
+3. Attachments
+MDM Field                                 STIX Object & Property
+-------------------------------------------------------------
+attachments[].file_name                   file.name
+attachments[].file_type                   file.mime_type (if not in content_type)
+attachments[].content_type                file.mime_type
+attachments[].sha256                      file.hashes.SHA-256
+attachments[].sha1                        file.hashes.SHA-1
+attachments[].md5                         file.hashes.MD5
+attachments[].size                        file.size
+attachments[].file_extension              file new object
+attachments[].content_id                  file new object, worth it?
+attachments[].content_transfer_encoding   file new object
+
+4. URL
+--  Surprisingly little URL support in schema (https://github.com/oasis-open/cti-stix2-json-schemas/blob/master/schemas/observables/url.json)
+MDM Field                                 STIX Object & Property
+-------------------------------------------------------------
+body.links[].href_url.url                 url.value
+body.links[].display_text                 url new object
+body.links[].mismatched                   url new object
+body.links[].href_url.domain.domain       url new object
+body.links[].href_url.path                url new object
+body.links[].href_url.scheme              url new object
+body.links[].display_url                  url new object
+
+5. IP Addresses
+MDM Field                                 STIX Object & Property
+-------------------------------------------------------------
+body.ips[].ip                             ipv4-addr.value or ipv6-addr.value
+headers.ips[].ip                          ipv4-addr.value or ipv6-addr.value
+headers.auth_summary.spf.details.client_ip.ip  ipv4-addr.value or ipv6-addr.value
+headers.hops[].received_spf.client_ip.ip  ipv4-addr.value or ipv6-addr.value
+headers.hops[].authentication_results.spf_details.client_ip.ip  ipv4-addr.value or ipv6-addr.value
+
+6. Domain Objects (Optional SCO)
+MDM Field                                 STIX Object & Property
+-------------------------------------------------------------
+sender.email.domain.domain                domain-name.value
+sender.email.domain.root_domain           domain-name new object
+recipients.to[].email.domain.domain       domain-name.value
+recipients.cc[].email.domain.domain       domain-name.value
+recipients.bcc[].email.domain.domain      domain-name.value
+headers.domains[].domain                  domain-name.value
+headers.domains[].root_domain             domain-name new object
+headers.domains[].tld                     domain-name new object
+headers.domains[].sld                     domain-name new object
+
+7. Metadata
+# Could be our area of enrichment
+MDM Field                                 STIX Object & Property
+-------------------------------------------------------------
+_meta.canonical_id                        observed-data.id (with prefix)
+_meta.created_at                          observed-data.created
+_meta.created_at                          observed-data.modified
+_meta.created_at                          observed-data.first_observed
+_meta.created_at                          observed-data.last_observed
+_meta.effective_at                        observed-data new object
+type.inbound                              observed-data new object
+type.internal                             observed-data new object
+type.outbound                             observed-data new object
+external.spam                             observed-data new object
