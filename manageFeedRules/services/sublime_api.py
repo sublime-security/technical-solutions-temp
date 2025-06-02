@@ -79,7 +79,7 @@ class SublimeAPI:
     
     def get_messages_by_rule(self, rule_id: str, date_from: datetime, 
                            progress_callback=None) -> List[Message]:
-        """Get messages flagged by a specific rule (with pagination)"""
+        """Get message groups flagged by a specific rule (with pagination)"""
         messages = []
         
         try:

@@ -156,18 +156,41 @@ def main(api_key, region, date_range_days, output_prefix, all_feeds, dry_run, ac
                     return 0
         
         # Find rules above threshold
-        rules_to_modify = processor.get_rules_above_threshold(results, threshold)
+        rules_above_threshold = processor.get_rules_above_threshold(results, threshold)
         
-        if not rules_to_modify:
-            print(f"No rules found with ≥{threshold}% coverage.")
+        # Ask about rules with no message groups
+        include_no_messages = confirm_action("Also remove actions from rules that didn't flag any message groups in this time period?")
+        rules_no_messages = []
+        if include_no_messages:
+            rules_no_messages = processor.get_rules_with_no_message_groups(results)
+        
+        # Combine the lists
+        all_rules_to_modify = rules_above_threshold + rules_no_messages
+        
+        if not all_rules_to_modify:
+            message = f"No rules found with ≥{threshold}% coverage"
+            if include_no_messages:
+                message += " or with no message groups"
+            print(f"{message}.")
             return 0
         
         # Show rules that would be modified
-        report_gen.print_rules_for_modification(rules_to_modify, threshold)
+        if rules_above_threshold:
+            report_gen.print_rules_for_modification(rules_above_threshold, threshold, "coverage")
+        
+        if rules_no_messages:
+            report_gen.print_rules_for_modification(rules_no_messages, rule_type="no_messages")
+        
+        # Show combined summary
+        print(f"\n📊 SUMMARY:")
+        print(f"  - Rules with ≥{threshold}% coverage: {len(rules_above_threshold)}")
+        if include_no_messages:
+            print(f"  - Rules with no message groups: {len(rules_no_messages)}")
+        print(f"  - Total rules to modify: {len(all_rules_to_modify)}")
         
         # Confirm modification
         action_word = "simulate removing" if settings.dry_run else "remove"
-        if not confirm_action(f"\nProceed to {action_word} actions from {len(rules_to_modify)} rules?"):
+        if not confirm_action(f"\nProceed to {action_word} actions from {len(all_rules_to_modify)} rules?"):
             print("Operation cancelled.")
             return 0
         
@@ -177,7 +200,7 @@ def main(api_key, region, date_range_days, output_prefix, all_feeds, dry_run, ac
         success_count = 0
         failed_rules = []
         
-        for result in rules_to_modify:
+        for result in all_rules_to_modify:
             rule_name = result.rule_name[:50]
             
             if settings.dry_run:

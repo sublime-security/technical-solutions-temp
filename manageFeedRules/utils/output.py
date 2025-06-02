@@ -51,11 +51,11 @@ class ReportGenerator:
             'rule_name', 
             'rule_actions',
             'automation_actions',
-            'total_messages',
-            'covered_messages',
-            'uncovered_messages',
+            'total_message_groups',
+            'covered_message_groups',
+            'uncovered_message_groups',
             'percent_covered',
-            'has_messages',
+            'has_message_groups',
             'error'
         ]
         
@@ -80,33 +80,44 @@ class ReportGenerator:
         print("📊 COVERAGE ANALYSIS SUMMARY")
         print("="*60)
         print(f"📋 Total rules analyzed: {summary_stats['total_rules_analyzed']}")
-        print(f"📧 Rules with messages: {summary_stats['rules_with_messages']}")
+        print(f"📧 Rules with messages: {summary_stats['rules_with_message_groups']}")
         print(f"⚠️  Rules with errors: {summary_stats['rules_with_errors']}")
         print(f"📅 Date range: {summary_stats['date_range_days']} days")
         print(f"📈 Average coverage: {summary_stats['average_coverage_percent']}%")
-        print(f"🔢 Total messages analyzed: {summary_stats['total_messages_analyzed']}")
-        print(f"✅ Messages covered by automations: {summary_stats['total_messages_covered']}")
+        print(f"🔢 Total messages analyzed: {summary_stats['total_message_groups_analyzed']}")
+        print(f"✅ Messages covered by automations: {summary_stats['total_message_groups_covered']}")
         print()
         print(f"📄 JSON report: {json_filename}")
         print(f"📊 CSV report: {csv_filename}")
         print(f"📁 Output directory: {Path(json_filename).parent}")
         print("="*60)
     
-    def print_rules_for_modification(self, rules: List[CoverageResult], threshold: float):
+    def print_rules_for_modification(self, rules: List[CoverageResult], threshold: float = None, rule_type: str = "coverage"):
         """Print rules that would be modified with pagination"""
         if not rules:
-            print(f"\n🔍 No rules found with ≥{threshold}% coverage.")
+            if rule_type == "coverage":
+                print(f"\n🔍 No rules found with ≥{threshold}% coverage.")
+            else:
+                print(f"\n🔍 No rules found with no message groups.")
             return
         
-        print(f"\n📋 Rules with ≥{threshold}% coverage that would be modified:")
+        if rule_type == "coverage":
+            print(f"\n📋 Rules with ≥{threshold}% coverage that would be modified:")
+        else:
+            print(f"\n📋 Rules with no message groups that would be modified:")
+        
         print("-" * 80)
-        print(f"{'Rule Name':<40} {'Coverage':<10} {'Messages':<10} {'Actions'}")
+        print(f"{'Rule Name':<40} {'Coverage':<10} {'Groups':<10} {'Actions'}")
         print("-" * 80)
         
         for i, rule in enumerate(rules):
             actions_str = ','.join(rule.rule_actions)
-            coverage_str = f"{rule.percent_covered:>7.1f}%" if isinstance(rule.percent_covered, (int, float)) else f"{rule.percent_covered:>9}"
-            print(f"{rule.rule_name[:39]:<40} {coverage_str} {rule.total_messages:>8} {actions_str}")
+            if rule_type == "coverage":
+                coverage_str = f"{rule.percent_covered:>7.1f}%" if isinstance(rule.percent_covered, (int, float)) else f"{rule.percent_covered:>9}"
+            else:
+                coverage_str = "unknown"
+            
+            print(f"{rule.rule_name[:39]:<40} {coverage_str:>10} {rule.total_message_groups:>8} {actions_str}")
             
             # Pause every 20 rules for large lists
             if (i + 1) % 20 == 0 and i < len(rules) - 1:

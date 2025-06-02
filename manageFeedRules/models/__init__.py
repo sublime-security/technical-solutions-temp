@@ -121,13 +121,13 @@ class CoverageResult:
     rule_id: str
     rule_name: str
     rule_actions: List[str]
-    total_messages: int
-    covered_messages: int
-    uncovered_messages: int
+    total_message_groups: int
+    covered_message_groups: int
+    uncovered_message_groups: int
     percent_covered: float | str  # Can be float or "unknown"
     automation_actions: List[str]
     error: Optional[str] = None
-    has_messages: bool = True  # New field to track if rule had messages
+    has_message_groups: bool = True  # New field to track if rule had message groups
     
     def to_dict(self) -> dict:
         return {
@@ -135,10 +135,10 @@ class CoverageResult:
             'rule_name': self.rule_name,
             'rule_actions': ','.join(self.rule_actions),
             'automation_actions': ','.join(self.automation_actions),
-            'total_messages': self.total_messages,
-            'covered_messages': self.covered_messages,
-            'uncovered_messages': self.uncovered_messages,
+            'total_message_groups': self.total_message_groups,
+            'covered_message_groups': self.covered_message_groups,
+            'uncovered_message_groups': self.uncovered_message_groups,
             'percent_covered': self.percent_covered if isinstance(self.percent_covered, str) else round(self.percent_covered, 2),
-            'has_messages': self.has_messages,
+            'has_message_groups': self.has_message_groups,
             'error': self.error
         }
