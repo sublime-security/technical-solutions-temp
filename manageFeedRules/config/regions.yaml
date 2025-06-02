@@ -1,0 +1,6 @@
+regions:
+  default: platform.sublime.security
+  uk: uk.platform.sublime.security
+  na-west: na-west.platform.sublime.security
+  # Add more regions here as needed
+  # eu-central: eu-central.platform.sublime.security

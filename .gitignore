@@ -2,3 +2,5 @@
 data/
 *.csv
 venv
+output/
+__pycache__/
