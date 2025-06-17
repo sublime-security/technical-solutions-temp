@@ -1,4 +1,4 @@
-"""Commands for migrating exclusions."""
+"""Refactored commands for migrating exclusions using utility functions."""
 from typing import Dict, List, Optional, Set
 import click
 

@@ -1,4 +1,4 @@
-"""Commands for migrating action associations to rules."""
+"""Refactored commands for migrating action associations to rules using utility functions."""
 from typing import Dict, List, Optional, Set, Tuple
 import click
 

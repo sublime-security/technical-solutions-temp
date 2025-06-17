@@ -1,4 +1,4 @@
-"""Command to migrate all components."""
+"""Refactored command to migrate all components using utility functions."""
 import time
 import click
 

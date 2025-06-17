@@ -44,11 +44,6 @@ REGIONS: Dict[str, Region] = {
         api_url="https://au.platform.sublime.security",
         description="Australia (Sydney)",
     ),
-    "CENTRICA": Region(
-        code="CENTRICA",
-        api_url="https://www.sublime.centrica.com",
-        description="Centrica",
-    ),
 }
 
 

@@ -1,4 +1,4 @@
-"""Commands for migrating feeds."""
+"""Refactored commands for migrating feeds using utility functions."""
 from typing import Dict, List, Optional, Set
 import click
 

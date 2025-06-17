@@ -1,4 +1,4 @@
-"""Commands for migrating rules."""
+"""Refactored commands for migrating rules using utility functions."""
 from typing import Dict, List, Optional, Set
 import click
 

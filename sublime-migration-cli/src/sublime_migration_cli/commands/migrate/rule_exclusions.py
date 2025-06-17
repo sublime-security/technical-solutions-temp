@@ -1,4 +1,4 @@
-"""Command for applying rule-level exclusions."""
+"""Migration command for applying rule-level exclusions."""
 from typing import Dict, List, Optional, Set, Tuple
 import re
 import click
