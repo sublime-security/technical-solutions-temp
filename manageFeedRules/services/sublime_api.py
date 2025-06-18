@@ -120,25 +120,37 @@ class SublimeAPI:
         return messages
     
     def remove_actions_from_rule(self, rule_id: str, action_ids_to_remove: List[str], 
-                                current_actions: List[Action]) -> bool:
-        """Remove specific actions from a rule"""
+                            current_actions: List[Action], rule_data: dict) -> bool:
+        """Remove specific actions from a rule while preserving auto-review settings"""
         try:
             # Get current action IDs and remove the ones we want to remove
             current_action_ids = [action.id for action in current_actions]
             remaining_action_ids = [aid for aid in current_action_ids if aid not in action_ids_to_remove]
-            
+
+            # Prepare patch data with auto-review fields from current rule
             patch_data = {
                 "action_ids": remaining_action_ids,
-                "auto_review_classification": None,
-                "auto_review_auto_share": False,
-                "tags": [],
                 "overwrite_actions": True,
-                "overwrite_auto_review_classification": True
+                "overwrite_auto_review_classification": True,
+                "tags": rule_data.get("tags", [])
             }
             
+            # Include auto-review classification if present
+            # auto_review_classification = rule_data.get("auto_review_classification")
+            # if auto_review_classification:
+            #     patch_data["auto_review_classification"] = auto_review_classification
+            #     patch_data["overwrite_auto_review_classification"] = False  # Don't clear existing classification
+            # else:
+            #     patch_data["auto_review_classification"] = None
+            #     # patch_data["overwrite_auto_review_classification"] = True
+                
+            # # Include auto-review auto-share setting
+            # patch_data["auto_review_auto_share"] = rule_data.get("auto_review_auto_share", False)
+
+            print(patch_data)
             self.client.patch(f'/v1/rules/{rule_id}', patch_data)
             return True
-            
+                
         except APIError as e:
             raise APIError(f"Failed to remove actions from rule {rule_id}: {str(e)}")
     

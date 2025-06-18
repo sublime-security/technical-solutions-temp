@@ -26,7 +26,7 @@ from models import Action
 @click.option('--output-prefix', default='rule_coverage_analysis', help='Output file prefix')
 @click.option('--all-feeds', is_flag=True, help='Analyze all feeds (not just Sublime Core)')
 @click.option('--dry-run', is_flag=True, help='Show what would be modified without making changes')
-@click.option('--action-types', default='delete_message,move_to_spam,quarantine_message', 
+@click.option('--action-types', default='delete_message,move_to_spam,quarantine_message,auto_review', 
               help='Comma-separated list of remediative action types')
 def main(api_key, region, date_range_days, output_prefix, all_feeds, dry_run, action_types):
     """
@@ -84,7 +84,9 @@ def main(api_key, region, date_range_days, output_prefix, all_feeds, dry_run, ac
         # Step 2: Get actions and identify remediative ones
         print("\n⚙️  Step 2: Identifying remediative actions...")
         all_actions = api.get_actions()
-        
+        print(all_actions)
+        print(settings.remediative_action_types)
+
         # Update actions with remediative status
         for action in all_actions:
             action.is_remediative = action.type in settings.remediative_action_types
@@ -212,10 +214,17 @@ def main(api_key, region, date_range_days, output_prefix, all_feeds, dry_run, ac
                     original_rule = next(r for r in detection_rules if r.id == result.rule_id)
                     remediative_action_ids_to_remove = [a.id for a in original_rule.remediative_actions]
                     
+                    rule_data = {
+                        'auto_review_classification': original_rule.auto_review_classification,
+                        'auto_review_auto_share': original_rule.auto_review_auto_share,
+                        'tags': original_rule.tags
+                    }
+
                     api.remove_actions_from_rule(
                         result.rule_id, 
                         remediative_action_ids_to_remove,
-                        original_rule.actions
+                        original_rule.actions,
+                        rule_data
                     )
                     print(f"✅ Removed actions from: {rule_name}")
                     success_count += 1

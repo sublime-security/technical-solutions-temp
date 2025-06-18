@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional
 from datetime import datetime
 
@@ -47,7 +47,10 @@ class Rule:
     actions: List[Action]
     feed_id: Optional[str] = None
     active: bool = True
-    action_data: List[dict] = None  # Store raw action data temporarily
+    action_data: List[dict] = None
+    auto_review_classification: Optional[str] = None
+    auto_review_auto_share: bool = False
+    tags: List[str] = field(default_factory=list)
     
     @classmethod
     def from_dict(cls, data: dict, all_actions: List[Action] = None) -> 'Rule':
@@ -69,7 +72,10 @@ class Rule:
             actions=rule_actions,
             feed_id=data.get('feed_id'),
             active=data.get('active', True),
-            action_data=action_data  # Keep raw data for later processing
+            action_data=action_data,
+            auto_review_classification=data.get('auto_review_classification'),
+            auto_review_auto_share=data.get('auto_review_auto_share', False),
+            tags=data.get('tags', [])
         )
     
     def populate_actions(self, all_actions: List[Action]):

@@ -124,7 +124,7 @@ class DataProcessor:
             result for result in results 
             if (isinstance(result.percent_covered, (int, float)) and 
                 result.percent_covered >= threshold and 
-                result.has_messages and 
+                result.has_message_groups and 
                 not result.error)
         ]
     

@@ -36,7 +36,8 @@ class Settings:
         self.remediative_action_types = [
             'delete_message',
             'move_to_spam', 
-            'quarantine_message'
+            'quarantine_message',
+            'auto_review'
         ]
         
         # Validate required settings
