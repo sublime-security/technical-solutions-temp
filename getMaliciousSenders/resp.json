@@ -1,0 +1,316 @@
+{
+  "action_id__info": {
+    "ac3910a4-fd92-40eb-88aa-02e6adae476d": 1
+  },
+  "all_group_canonical_ids": [],
+  "attachment_name__info": null,
+  "attachment_sha256__info": null,
+  "flagged_rule_id__info": {
+    "902c279b-5234-497f-bfc9-e61ccbc9fcf1": 1,
+    "db636817-1a14-4aa0-a878-1cdd4c9ab776": 1
+  },
+  "flagged_rule_severity__info": {
+    "medium": 1
+  },
+  "has_attachment__info": {
+    "false": 1
+  },
+  "historically_matched_rule_id__info": null,
+  "historically_matched_rule_severity__info": null,
+  "mailbox_email__info": {
+    "melissakayh@gmail.com": 1
+  },
+  "message_source_id__info": {
+    "466c0d1c-549d-4fb3-ab35-f45b882f768e": 1
+  },
+  "recipient_email__info": {
+    "melissakayh@gmail.com": 1
+  },
+  "reported_as_phish_by__info": null,
+  "sender_display_name__info": {
+    "Melissa Hale": 1
+  },
+  "sender_domain__info": {
+    "gmail.com": 1
+  },
+  "sender_email__info": {
+    "mayannamayanna777@gmail.com": 1
+  },
+  "spam__info": {
+    "spam": 1
+  },
+  "state__info": {
+    "quarantined-auto": 1
+  },
+  "stats_limit_exceeded": false,
+  "subject__info": {
+    "Your Amazon Order #AWM_8013LK – Payment Confirmation & Invoice": 1
+  },
+  "total_group_count": 1,
+  "total_message_count_lower_bound": 1,
+  "message_groups": [
+    {
+      "message_action_events": [
+        {
+          "action_id": "3b1994ba-76ce-4b9b-bcd1-329e83d4d967",
+          "action_name": "Auto-quarantine",
+          "action_type": "quarantine_message",
+          "action_internal_type": "quarantine_message",
+          "change": "applied",
+          "user_id": null,
+          "rule_ids": null,
+          "message_id": null,
+          "created_at": "2025-07-09T14:38:55.423581Z"
+        }
+      ],
+      "action_names": [
+        "Auto-quarantine"
+      ],
+      "attachment_names": [],
+      "attack_score_verdict": "malicious",
+      "classification": "malicious",
+      "delivery_status": "delivered",
+      "matched_exclusions": null,
+      "first_created_at": "2025-07-09T14:38:41.401282Z",
+      "first_reported_as_phish_at": null,
+      "first_historically_reported_as_phish_at": null,
+      "flagged_rules": [
+        {
+          "rule_meta": {
+            "id": "019364dc-56fb-70aa-9709-fa29b88c094d",
+            "name": "Remediate malicious flagged messages",
+            "authors": null,
+            "description": "Quarantine flagged messages with a Malicious Attack Score.",
+            "references": [],
+            "tags": null,
+            "false_positives": null,
+            "maturity": null,
+            "severity": null,
+            "label": null,
+            "created_by_org_id": null,
+            "created_by_org_name": null,
+            "created_by_user_id": null,
+            "created_by_user_name": null,
+            "created_at": "2024-11-25T19:46:21.832524+00:00",
+            "user_provided_tags": [],
+            "attack_types": null,
+            "tactics_and_techniques": null,
+            "detection_methods": null,
+            "auto_review_classification": null,
+            "auto_review_auto_share": false
+          },
+          "rule_id": "902c279b-5234-497f-bfc9-e61ccbc9fcf1",
+          "sqar_type": "triage_rule",
+          "no_longer_flags": false
+        },
+        {
+          "rule_meta": {
+            "id": "01927c98-42d3-71d1-bf13-03584eb6d53d",
+            "name": "Callback Phishing in body or attachment (untrusted sender)",
+            "authors": null,
+            "description": "Detects callback scams by analyzing text within images of receipts or invoices from untrusted senders.\n",
+            "references": [],
+            "tags": null,
+            "false_positives": null,
+            "maturity": null,
+            "severity": "medium",
+            "label": null,
+            "created_by_org_id": null,
+            "created_by_org_name": null,
+            "created_by_user_id": null,
+            "created_by_user_name": null,
+            "created_at": "2024-10-11T17:20:02.394986+00:00",
+            "user_provided_tags": [],
+            "attack_types": [
+              "Callback Phishing"
+            ],
+            "tactics_and_techniques": [
+              "Out of band pivot",
+              "Social engineering"
+            ],
+            "detection_methods": [
+              "Content analysis",
+              "File analysis",
+              "Optical Character Recognition",
+              "Natural Language Understanding",
+              "Sender analysis"
+            ],
+            "auto_review_classification": null,
+            "auto_review_auto_share": false
+          },
+          "rule_id": "db636817-1a14-4aa0-a878-1cdd4c9ab776",
+          "sqar_type": "detection_rule",
+          "no_longer_flags": false
+        }
+      ],
+      "historically_matched_rules": null,
+      "last_created_at": "2025-07-09T14:38:41.401282Z",
+      "mailbox_email_addresses": [
+        "melissakayh@gmail.com"
+      ],
+      "message_actions_taken": [
+        {
+          "action_id": "ac3910a4-fd92-40eb-88aa-02e6adae476d",
+          "action_internal_type": "",
+          "action_name": "Auto-quarantine",
+          "action_type": "quarantine_message",
+          "created_at": "2025-07-09T14:38:54.90086Z",
+          "event_type": "action_quarantine_message",
+          "message_id": "0197ef9f-e220-7db0-b12c-4435bfe64335",
+          "rule_id": "902c279b-5234-497f-bfc9-e61ccbc9fcf1",
+          "user_id": null
+        }
+      ],
+      "message_auto_quarantines": [
+        {
+          "completed_at": "2025-07-09T14:38:54.90086Z",
+          "mailbox_display_name": null,
+          "mailbox_email_address": "melissakayh@gmail.com",
+          "mailbox_external_id": null,
+          "message_id": "0197ef9f-e220-7db0-b12c-4435bfe64335"
+        }
+      ],
+      "message_auto_trashes": [],
+      "message_forwards": [],
+      "id": "b3853d752c9aad678ed1e03501c74d170ef1f2f1ca9a2703911248421ba9a0a4",
+      "state": "quarantined-auto",
+      "message_links_clicked": [],
+      "message_opens": [],
+      "message_replies": [],
+      "number_of_messages_lower_bound": 1,
+      "previews": [
+        {
+          "message_action_events": [
+            {
+              "action_id": "ac3910a4-fd92-40eb-88aa-02e6adae476d",
+              "action_name": "Auto-quarantine",
+              "action_type": "quarantine_message",
+              "action_internal_type": "",
+              "change": "applied",
+              "user_id": null,
+              "rule_ids": [
+                "902c279b-5234-497f-bfc9-e61ccbc9fcf1"
+              ],
+              "message_id": "0197ef9f-e220-7db0-b12c-4435bfe64335",
+              "created_at": "2025-07-09T14:38:54.908092Z"
+            },
+            {
+              "action_id": "3b1994ba-76ce-4b9b-bcd1-329e83d4d967",
+              "action_name": "Auto-quarantine",
+              "action_type": "quarantine_message",
+              "action_internal_type": "quarantine_message",
+              "change": "applied",
+              "user_id": null,
+              "rule_ids": null,
+              "message_id": "0197ef9f-e220-7db0-b12c-4435bfe64335",
+              "created_at": "2025-07-09T14:39:00.316103Z"
+            }
+          ],
+          "actions_taken": [
+            {
+              "action_id": "ac3910a4-fd92-40eb-88aa-02e6adae476d",
+              "action_internal_type": "",
+              "action_name": "Auto-quarantine",
+              "action_type": "quarantine_message",
+              "created_at": "2025-07-09T14:38:54.90086Z",
+              "event_type": "action_quarantine_message",
+              "message_id": "0197ef9f-e220-7db0-b12c-4435bfe64335",
+              "rule_id": "902c279b-5234-497f-bfc9-e61ccbc9fcf1",
+              "user_id": null
+            }
+          ],
+          "attachment_names": null,
+          "attachment_sha256s": null,
+          "created_at": "2025-07-09T14:38:42.208784Z",
+          "delivered_at": "2025-07-09T14:38:20Z",
+          "external_created_at": "2025-07-09T14:38:20Z",
+          "first_forwarded_at": null,
+          "first_quarantined_at": "2025-07-09T14:38:54.90086Z",
+          "first_read_at": null,
+          "first_replied_at": null,
+          "first_trashed_at": null,
+          "flagged_rules": [
+            {
+              "rule_meta": {
+                "id": "01927c98-42d3-71d1-bf13-03584eb6d53d",
+                "name": "Callback Phishing in body or attachment (untrusted sender)",
+                "authors": null,
+                "description": "Detects callback scams by analyzing text within images of receipts or invoices from untrusted senders.\n",
+                "references": [],
+                "tags": null,
+                "false_positives": null,
+                "maturity": null,
+                "severity": "medium",
+                "label": null,
+                "created_by_org_id": null,
+                "created_by_org_name": null,
+                "created_by_user_id": null,
+                "created_by_user_name": null,
+                "created_at": "2024-10-11T17:20:02.394986+00:00",
+                "user_provided_tags": [],
+                "attack_types": [
+                  "Callback Phishing"
+                ],
+                "tactics_and_techniques": [
+                  "Out of band pivot",
+                  "Social engineering"
+                ],
+                "detection_methods": [
+                  "Content analysis",
+                  "File analysis",
+                  "Optical Character Recognition",
+                  "Natural Language Understanding",
+                  "Sender analysis"
+                ],
+                "auto_review_classification": null,
+                "auto_review_auto_share": false
+              },
+              "rule_id": "db636817-1a14-4aa0-a878-1cdd4c9ab776",
+              "sqar_type": "detection_rule",
+              "no_longer_flags": false
+            }
+          ],
+          "forward_recipients": [],
+          "historically_matched_rules": null,
+          "in_email_bomb": false,
+          "is_abuse_report_forward": false,
+          "is_warning_banner_applied": false,
+          "mailbox_email_address": "melissakayh@gmail.com",
+          "mailbox_external_id": null,
+          "mailbox_display_name": null,
+          "mailbox_id": "c4182d78-468a-43ba-8bea-e6c1e148a74d",
+          "matched_exclusion_rules": null,
+          "id": "0197ef9f-e220-7db0-b12c-4435bfe64335",
+          "received_inline": false,
+          "recipients": [
+            "melissakayh@gmail.com"
+          ],
+          "sender_display_name": "Melissa Hale",
+          "sender_email_address": "mayannamayanna777@gmail.com",
+          "spam": true,
+          "subject": "Your Amazon Order #AWM_8013LK – Payment Confirmation & Invoice",
+          "type": {
+            "internal": false,
+            "inbound": false,
+            "outbound": false
+          },
+          "state": "quarantined-auto"
+        }
+      ],
+      "recipients": [
+        "melissakayh@gmail.com"
+      ],
+      "review_label": "phishing",
+      "review_status": "reviewed",
+      "review_comment": null,
+      "sender_email_addresses": [
+        "mayannamayanna777@gmail.com"
+      ],
+      "subjects": [
+        "Your Amazon Order #AWM_8013LK – Payment Confirmation & Invoice"
+      ],
+      "spam": "spam",
+      "user_reports": null
+    }
+  ]
+}

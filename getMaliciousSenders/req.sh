@@ -1,0 +1,11 @@
+curl -X GET 'https://platform.sublime.security/v1/messages/groups' \
+  --url-query 'attack_score_verdict__is=malicious' \
+  --url-query 'attack_surface_reduction__is=include' \
+  --url-query 'created_at__gte=2025-07-04T05:00:00.000Z' \
+  --url-query 'created_at__lt=2025-07-11T05:00:00.000Z' \
+  --url-query 'fetch_all_ids=false' \
+  --url-query 'flagged__eq=true' \
+  --url-query 'limit=500' \
+  --url-query 'offset=0' \
+  --header 'accept: application/json' \
+  --header 'Authorization: Bearer TOKEN'
