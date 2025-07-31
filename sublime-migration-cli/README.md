@@ -13,8 +13,8 @@ The Sublime Migration CLI enables you to manage and migrate configuration object
   - `migrate`: Copy configuration between instances
   - `export`: Export configuration to local files for version control
   - `report`: Generate comparison reports between instances
-  
 - **Supported Object Types**:
+
   - Actions
   - Lists (string and user_group)
   - Exclusions (global and detection)
@@ -65,13 +65,14 @@ export SUBLIME_API_KEY="your-api-key"
 export SUBLIME_REGION="NA_EAST"
 
 # For destination instance (when migrating)
-export SUBLIME_DEST_API_KEY="dest-api-key" 
+export SUBLIME_DEST_API_KEY="dest-api-key"
 export SUBLIME_DEST_REGION="EU_DUBLIN"
 ```
 
 ### Available Regions
 
 - `NA_EAST`: North America East (Virginia)
+- `NA_EAST_2`: North America East (Ohio)
 - `NA_WEST`: North America West (Oregon)
 - `CANADA`: Canada (Montréal)
 - `EU_DUBLIN`: Europe (Dublin)
