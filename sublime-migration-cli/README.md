@@ -40,11 +40,16 @@ The Sublime Migration CLI enables you to manage and migrate configuration object
 
 - Python 3.8 or higher
 - Required packages: click, requests, rich, tabulate, PyYAML
+- Upgrade pip and setuptools to allow editable installs using `pyproject.toml`:
+
+```bash
+pip install --upgrade pip setuptools
+```
 
 ### Install from Source
 
 ```bash
-git clone https://github.com/yourusername/sublime-migration-cli.git
+git clone https://github.com/sublime-security/technical-solutions.git
 cd sublime-migration-cli
 pip install -e .
 ```
