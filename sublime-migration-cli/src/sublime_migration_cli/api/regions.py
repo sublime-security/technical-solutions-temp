@@ -29,6 +29,11 @@ REGIONS: Dict[str, Region] = {
         api_url="https://na-east-2.platform.sublime.security",
         description="North America East (Ohio)",
     ),
+    "NA_EAST_3": Region(
+        code="NA_EAST_3",
+        api_url="https://na-east-3.platform.sublime.security",
+        description="North America East 3",
+    ),
     "CANADA": Region(
         code="CANADA",
         api_url="https://ca.platform.sublime.security",

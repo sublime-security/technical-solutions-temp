@@ -72,7 +72,8 @@ export SUBLIME_DEST_REGION="EU_DUBLIN"
 ### Available Regions
 
 - `NA_EAST`: North America East (Virginia)
-- `NA_EAST_2`: North America East (Ohio)
+- `NA_EAST_2`: North America East 2
+- `NA_EAST_3`: North America East 3
 - `NA_WEST`: North America West (Oregon)
 - `CANADA`: Canada (Montréal)
 - `EU_DUBLIN`: Europe (Dublin)
